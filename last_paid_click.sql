@@ -1,16 +1,16 @@
 WITH last_paid_visit AS (
-    SELECT 
+    SELECT
         visitor_id,
         MAX(visit_date) AS last_visit_date
-    FROM 
-        sessions 
-    WHERE 
+    FROM
+        sessions
+    WHERE
         medium IN ('cpc', 'cpm', 'cpa', 'youtube', 'cpp', 'tg', 'social')
-    GROUP BY 
+    GROUP BY
         visitor_id
 )
 
-SELECT 
+SELECT
     lpv.visitor_id,
     lpv.last_visit_date AS visit_date,
     s.source AS utm_source,
@@ -21,17 +21,18 @@ SELECT
     l.amount,
     l.closing_reason,
     l.status_id
-FROM 
+FROM
     last_paid_visit lpv
-JOIN 
+JOIN
     sessions s ON s.visitor_id = lpv.visitor_id AND s.visit_date = lpv.last_visit_date
-LEFT JOIN 
+LEFT JOIN
     leads l ON lpv.visitor_id = l.visitor_id AND l.created_at >= lpv.last_visit_date
-ORDER BY    
+ORDER BY
     l.amount DESC NULLS LAST,
     lpv.last_visit_date,
     s.source,
     s.medium,
     s.campaign
 LIMIT 10;
+
 
