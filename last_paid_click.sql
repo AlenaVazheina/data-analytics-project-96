@@ -29,10 +29,11 @@ LEFT JOIN
     leads l ON lpv.visitor_id = l.visitor_id AND l.created_at >= lpv.last_visit_date
 ORDER BY
     l.amount DESC NULLS LAST,
-    lpv.last_visit_date,
-    s.source,
-    s.medium,
-    s.campaign
+    lpv.last_visit_date DESC,
+    s.source DESC,
+    s.medium DESC,
+    s.campaign DESC
 LIMIT 10;
+
 
 
