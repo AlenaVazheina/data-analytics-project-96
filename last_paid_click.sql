@@ -1,29 +1,37 @@
-with last_paid_visit as (
-	select visitor_id,
-	max(visit_date) as last_visit_date
-	from sessions 
-	where medium in ('cpc', 'cpm', 'cpa', 'youtube', 'cpp', 'tg', 'social')
-	group by visitor_id
+WITH last_paid_visit AS (
+    SELECT 
+        visitor_id,
+        MAX(visit_date) AS last_visit_date
+    FROM 
+        sessions 
+    WHERE 
+        medium IN ('cpc', 'cpm', 'cpa', 'youtube', 'cpp', 'tg', 'social')
+    GROUP BY 
+        visitor_id
 )
-select lpv.visitor_id,
-lpv.last_visit_date as visit_date,
-s.source as utm_source,
-s.medium as utm_medium,
-s.campaign as utm_campaign,
-l.lead_id,
-l.created_at,
-l.amount,
-l.closing_reason,
-l.status_id
-from last_paid_visit lpv
-join sessions s 
-on s.visitor_id = lpv.visitor_id and s.visit_date = lpv.last_visit_date
-left join leads l
-on lpv.visitor_id = l.visitor_id and l.created_at >= lpv.last_visit_date
-order by    
-l.amount DESC NULLS LAST,
+
+SELECT 
+    lpv.visitor_id,
+    lpv.last_visit_date AS visit_date,
+    s.source AS utm_source,
+    s.medium AS utm_medium,
+    s.campaign AS utm_campaign,
+    l.lead_id,
+    l.created_at,
+    l.amount,
+    l.closing_reason,
+    l.status_id
+FROM 
+    last_paid_visit lpv
+JOIN 
+    sessions s ON s.visitor_id = lpv.visitor_id AND s.visit_date = lpv.last_visit_date
+LEFT JOIN 
+    leads l ON lpv.visitor_id = l.visitor_id AND l.created_at >= lpv.last_visit_date
+ORDER BY    
+    l.amount DESC NULLS LAST,
     lpv.last_visit_date,
-    3,
+    s.source,
     s.medium,
     s.campaign
-    limit 10;
+LIMIT 10;
+
