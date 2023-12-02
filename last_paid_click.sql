@@ -5,7 +5,6 @@ with last_paid_visit as (
 	where medium in ('cpc', 'cpm', 'cpa', 'youtube', 'cpp', 'tg', 'social')
 	group by visitor_id
 )
-
 select lpv.visitor_id,
 lpv.last_visit_date as visit_date,
 s.source as utm_source,
