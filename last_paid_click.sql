@@ -13,27 +13,30 @@ WITH last_paid_visit AS (
 SELECT
     lpv.visitor_id,
     lpv.last_visit_date AS visit_date,
-    s.source AS utm_source,
-    s.medium AS utm_medium,
-    s.campaign AS utm_campaign,
-    l.lead_id,
-    l.created_at,
-    l.amount,
-    l.closing_reason,
-    l.status_id
+    sess.source AS utm_source,
+    sess.medium AS utm_medium,
+    sess.campaign AS utm_campaign,
+    ld.lead_id,
+    ld.created_at,
+    ld.amount,
+    ld.closing_reason,
+    ld.status_id
 FROM
     last_paid_visit lpv
 JOIN
-    sessions s ON s.visitor_id = lpv.visitor_id AND s.visit_date = lpv.last_visit_date
+    sessions sess ON sess.visitor_id = lpv.visitor_id 
+    AND sess.visit_date = lpv.last_visit_date
 LEFT JOIN
-    leads l ON lpv.visitor_id = l.visitor_id AND l.created_at >= lpv.last_visit_date
+    leads ld ON lpv.visitor_id = ld.visitor_id 
+    AND ld.created_at >= lpv.last_visit_date
 ORDER BY
-    l.amount DESC NULLS LAST,
+    ld.amount DESC NULLS LAST,
     lpv.last_visit_date DESC,
-    s.source DESC,
-    s.medium DESC,
-    s.campaign DESC
+    sess.source DESC,
+    sess.medium DESC,
+    sess.campaign DESC
 LIMIT 10;
+
 
 
 
