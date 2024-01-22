@@ -72,8 +72,10 @@ group by
     ads.total_cost,
     lvl.visit_date
 order by
-    revenue desc nulls last, lvl.visit_date asc,
+    sum(lvl.amount) filter (where lvl.status_id = 142) desc nulls last, 
+    lvl.visit_date asc,
     lvl.utm_campaign desc,
-    visitors_count asc, lvl.utm_source asc,
+    count(lvl.visitor_id) asc, 
+    lvl.utm_source asc,
     lvl.utm_medium asc
 limit 15;
