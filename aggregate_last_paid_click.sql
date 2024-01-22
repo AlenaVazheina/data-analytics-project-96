@@ -53,7 +53,7 @@ select
     lvl.utm_medium,
     lvl.utm_campaign,
     ads.total_cost,
-    date(lvl.visit_date) as visit_date,
+    lvl.visit_date,
     count(lvl.visitor_id) filter (where lvl.lead_id is not null) as leads_count,
     count(lvl.visitor_id) filter (where lvl.status_id = 142) as purchases_count,
     sum(lvl.amount) filter (where lvl.status_id = 142) as revenue,
