@@ -14,10 +14,11 @@ visitors_leads as (
             partition by s.visitor_id
             order by s.visit_date desc
         ) as rn
-from sessions as s
+    from sessions as s
     left join leads as l
-        on s.visitor_id = l.visitor_id
-        and s.visit_date <= l.created_at
+        on 
+            s.visitor_id = l.visitor_id
+            and s.visit_date <= l.created_at
     where
         s.medium in ('cpc', 'cpm', 'cpa', 'youtube', 'cpp', 'tg', 'social')
 ),
@@ -48,15 +49,15 @@ ads_ya_vk as (
 )
 
 select
-    last_visits_and_leads.utm_source,
-    last_visits_and_leads.utm_medium,
-    last_visits_and_leads.utm_campaign,
+    lvl.utm_source,
+    lvl.utm_medium,
+    lvl.utm_campaign,
     ads.total_cost,
-    date(last_visits_and_leads.visit_date) as visit_date,
-    count(last_visits_and_leads.visitor_id) filter (where last_visits_and_leads.lead_id is not null) as leads_count,
-    count(last_visits_and_leads.visitor_id) filter (where last_visits_and_leads.status_id = 142) as purchases_count,
-    sum(last_visits_and_leads.amount) filter (where last_visits_and_leads.status_id = 142) as revenue,
-    count(last_visits_and_leads.visitor_id) as visitors_count
+    date(lvl.visit_date) as visit_date,
+    count(lvl.visitor_id) filter (where lvl.lead_id is not null) as leads_count,
+    count(lvl.visitor_id) filter (where lvl.status_id = 142) as purchases_count,
+    sum(lvl.amount) filter (where lvl.status_id = 142) as revenue,
+    count(lvl.visitor_id) as visitors_count
 from last_visits_and_leads as lvl
 left join ads_ya_vk as ads
     on
