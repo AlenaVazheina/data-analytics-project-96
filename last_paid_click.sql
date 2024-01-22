@@ -22,11 +22,15 @@ SELECT
     ld.closing_reason,
     ld.status_id
 FROM
-    last_paid_visit lpv
-    JOIN sessions sess ON sess.visitor_id = lpv.visitor_id 
-        AND sess.visit_date = lpv.last_visit_date
-    LEFT JOIN leads ld ON lpv.visitor_id = ld.visitor_id 
-        AND ld.created_at >= lpv.last_visit_date
+    last_paid_visit AS lpv
+INNER JOIN sessions AS sess
+    ON
+        lpv.visitor_id = sess.visitor_id
+        AND lpv.last_visit_date = sess.visit_date
+LEFT JOIN leads AS ld
+    ON
+        lpv.visitor_id = ld.visitor_id
+        AND lpv.last_visit_date <= ld.created_at
 ORDER BY
     ld.amount DESC NULLS LAST,
     lpv.last_visit_date DESC,
@@ -34,8 +38,3 @@ ORDER BY
     sess.medium DESC,
     sess.campaign DESC
 LIMIT 10;
-
-
-
-
-
