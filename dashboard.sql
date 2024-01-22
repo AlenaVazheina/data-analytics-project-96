@@ -11,7 +11,7 @@ visitors_leads as (
         l.status_id,
         date(s.visit_date) as visit_date,
         row_number()
-            over (partition by s.visitor_id order by s.visit_date desc)
+        over (partition by s.visitor_id order by s.visit_date desc)
         as rn
     from sessions as s
     left join leads as l
@@ -19,13 +19,15 @@ visitors_leads as (
             s.visitor_id = l.visitor_id
             and s.visit_date <= l.created_at
     where
-        s.medium in ('cpc','cpm','cpa','youtube','cpp','tg','social')
+        s.medium in ('cpc', 'cpm', 'cpa', 'youtube', 'cpp', 'tg', 'social')
     order by s.visitor_id
 ),
+
 last_visits_and_leads as (
     select * from visitors_leads
     where rn = 1
 ),
+
 ads_ya_vk as (
     select
         date(campaign_date) as advertising_date,
@@ -44,8 +46,10 @@ ads_ya_vk as (
         sum(daily_spent) as total_cost
     from vk_ads
     group by 1, 2, 3, 4
-), final_table as ( 
-select
+),
+	
+final_table as ( 
+    select
     date(lvl.visit_date) as visit_date,
     count(lvl.visitor_id) as visitors_count,
     lvl.utm_source,
@@ -60,7 +64,8 @@ left join ads_ya_vk as ads
     on
         lvl.visit_date = ads.advertising_date and lvl.utm_source = ads.utm_source and lvl.utm_medium = ads.utm_medium and lvl.utm_campaign = ads.utm_campaign
 group by 1, 3, 4, 5, 6
-order by 9 desc nulls last, 1, 5 desc, 2, 3, 4),
+order by 9 desc nulls last, 1, 5 desc, 2, 3, 4
+),
 
 --корреляция пирсона
 select 
@@ -94,26 +99,28 @@ FROM
     final_table
 GROUP BY 
     1, 2, 3, 4
-ORDER BY 
+order by 
     1;
 
 
 --расходы на рекламу по каналам в динамике
 with cte_for_ads_spendings as (
 
-select visit_date,
+select
+visit_date,
 utm_source,
-SUM(total_cost) AS total_cost
+sum(total_cost) AS total_cost
 from final_table
 where utm_source like 'vk%' or utm_source like '%andex%'
 group by 1, 2)
 
-select cte.visit_date,
+select
+cte.visit_date,
 case 
 	when cte.utm_source like 'vk%' then 'vk'
     when cte.utm_source like '%andex%' then 'yandex'
 end as utm_source,
-COALESCE(MAX(cte.total_cost), 0) AS total_cost
+coalesce(max(cte.total_cost), 0) AS total_cost
 from cte_for_ads_spendings cte
 
 group by 1, 2
@@ -185,4 +192,3 @@ select
     sum(visitors_count) as user_count
 from final_table
 group by 1, 2, 3
-
