@@ -62,8 +62,6 @@ left join ads_ya_vk as ads
 group by 1, 3, 4, 5, 6
 order by 9 desc nulls last, 1, 5 desc, 2, 3, 4),
 
-
-
 --корреляция пирсона
 select 
 	case 
@@ -163,17 +161,28 @@ group by 1, 2, 3, 4
 
 
 --количество пользователей по дням, неделям и месяцам
-select  
-	date(visit_date) AS day,
-	case 
-		when date(visit_date) between '2023-06-01' and '2023-06-04' then '01-06 - 04-06' 
-		when date(visit_date) between '2023-06-05' and '2023-06-11' then '05-06 - 11-06' 
-		when date(visit_date) between '2023-06-12' and '2023-06-18' then '12-06 - 18-06' 
-		when date(visit_date) between '2023-06-19' and '2023-06-25' then '19-06 - 25-06'  
-		when date(visit_date) between '2023-06-26' and '2023-06-30' then '26-06 - 30-06'
-	end as week,
-	case when date(visit_date) between '2023-06-01' and '2023-06-30' then 'June'
-	end as month,
-	sum(visitors_count) AS user_count
+select
+    date(visit_date) as day,
+    case
+        when
+            date(visit_date) between '2023-06-01' and '2023-06-04'
+            then '01-06 - 04-06'
+        when
+            date(visit_date) between '2023-06-05' and '2023-06-11'
+            then '05-06 - 11-06'
+        when
+            date(visit_date) between '2023-06-12' and '2023-06-18'
+            then '12-06 - 18-06'
+        when
+            date(visit_date) between '2023-06-19' and '2023-06-25'
+            then '19-06 - 25-06'
+        when
+            date(visit_date) between '2023-06-26' and '2023-06-30'
+            then '26-06 - 30-06'
+    end as week,
+    case when date(visit_date) between '2023-06-01' and '2023-06-30' then 'June'
+    end as month,
+    sum(visitors_count) as user_count
 from final_table
 group by 1, 2, 3
+
