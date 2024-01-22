@@ -19,13 +19,15 @@ visitors_leads as (
             s.visitor_id = l.visitor_id
             and s.visit_date <= l.created_at
     where
-        s.medium in ('cpc','cpm','cpa','youtube','cpp','tg','social')
+        s.medium in ('cpc', 'cpm', 'cpa', 'youtube', 'cpp', 'tg', 'social')
     order by s.visitor_id
 ),
+
 last_visits_and_leads as (
     select * from visitors_leads
     where rn = 1
 ),
+
 ads_ya_vk as (
     select
         date(campaign_date) as advertising_date,
@@ -45,6 +47,7 @@ ads_ya_vk as (
     from vk_ads
     group by 1, 2, 3, 4
 )
+
 select
     date(lvl.visit_date) as visit_date,
     count(lvl.visitor_id) as visitors_count,
@@ -58,7 +61,10 @@ select
 from last_visits_and_leads as lvl
 left join ads_ya_vk as ads
     on
-        lvl.visit_date = ads.advertising_date and lvl.utm_source = ads.utm_source and lvl.utm_medium = ads.utm_medium and lvl.utm_campaign = ads.utm_campaign
+        lvl.visit_date = ads.advertising_date
+        and lvl.utm_source = ads.utm_source
+        and lvl.utm_medium = ads.utm_medium
+        and lvl.utm_campaign = ads.utm_campaign
 group by 1, 3, 4, 5, 6
 order by 9 desc nulls last, 1, 5 desc, 2, 3, 4
 limit 15
