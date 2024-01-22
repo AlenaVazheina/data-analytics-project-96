@@ -53,7 +53,7 @@ select
     lvl.utm_medium,
     lvl.utm_campaign,
     ads.total_cost,
-    lvl.visit_date,
+    date(lvl.visit_date) as visit_date,
     count(lvl.visitor_id) filter (where lvl.lead_id is not null) as leads_count,
     count(lvl.visitor_id) filter (where lvl.status_id = 142) as purchases_count,
     sum(lvl.amount) filter (where lvl.status_id = 142) as revenue,
@@ -65,17 +65,10 @@ left join ads_ya_vk as ads
         and lvl.utm_source = ads.utm_source
         and lvl.utm_medium = ads.utm_medium
         and lvl.utm_campaign = ads.utm_campaign
-group by
-    lvl.utm_source,
-    lvl.utm_medium,
-    lvl.utm_campaign,
-    ads.total_cost,
-    lvl.visit_date
+group by 1, 2, 3, 4, 5
 order by
-    sum(lvl.amount) filter (where lvl.status_id = 142) desc nulls last, 
-    lvl.visit_date asc,
+    revenue desc nulls last, visit_date asc,
     lvl.utm_campaign desc,
-    count(lvl.visitor_id) asc, 
-    lvl.utm_source asc,
+    visitors_count asc, lvl.utm_source asc,
     lvl.utm_medium asc
 limit 15;
