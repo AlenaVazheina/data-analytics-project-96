@@ -16,7 +16,7 @@ visitors_leads as (
         ) as rn
     from sessions as s
     left join leads as l
-        on 
+        on
             s.visitor_id = l.visitor_id
             and s.visit_date <= l.created_at
     where
@@ -67,6 +67,8 @@ left join ads_ya_vk as ads
         and last_visits_and_leads.utm_campaign = ads.utm_campaign
 group by 1, 2, 3, 4, 5
 order by
-    revenue desc nulls last, visit_date asc, last_visits_and_leads.utm_campaign desc,
-    visitors_count asc, last_visits_and_leads.utm_source asc, last_visits_and_leads.utm_medium asc
+    revenue desc nulls last, visit_date asc,
+    last_visits_and_leads.utm_campaign desc,
+    visitors_count asc, last_visits_and_leads.utm_source asc,
+    last_visits_and_leads.utm_medium asc
 limit 15;
