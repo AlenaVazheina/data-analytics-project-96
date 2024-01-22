@@ -61,10 +61,10 @@ select
 from last_visits_and_leads as lvl
 left join ads_ya_vk as ads
     on
-        last_visits_and_leads.visit_date = ads.advertising_date
-        and last_visits_and_leads.utm_source = ads.utm_source
-        and last_visits_and_leads.utm_medium = ads.utm_medium
-        and last_visits_and_leads.utm_campaign = ads.utm_campaign
+        lvl.visit_date = ads.advertising_date
+        and lvl.utm_source = ads.utm_source
+        and lvl.utm_medium = ads.utm_medium
+        and lvl.utm_campaign = ads.utm_campaign
 group by 1, 2, 3, 4, 5
 order by
     revenue desc nulls last, visit_date asc,
