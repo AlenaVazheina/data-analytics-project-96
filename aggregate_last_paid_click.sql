@@ -16,7 +16,8 @@ visitors_leads as (
         ) as rn
     from sessions as s
     left join leads as l
-            on s.visitor_id = l.visitor_id
+            on
+            s.visitor_id = l.visitor_id
             and s.visit_date <= l.created_at
     where
         s.medium in ('cpc', 'cpm', 'cpa', 'youtube', 'cpp', 'tg', 'social')
@@ -59,12 +60,13 @@ select
     count(lvl.visitor_id) as visitors_count
 from last_visits_and_leads as lvl
 left join ads_ya_vk as ads
-    on 
+    on
         last_visits_and_leads.visit_date = ads.advertising_date
         and last_visits_and_leads.utm_source = ads.utm_source
         and last_visits_and_leads.utm_medium = ads.utm_medium
         and last_visits_and_leads.utm_campaign = ads.utm_campaign
 group by 1, 2, 3, 4, 5
-order by revenue desc nulls last, visit_date asc, lvl.utm_campaign desc,
+order by
+    revenue desc nulls last, visit_date asc, lvl.utm_campaign desc,
     visitors_count asc, lvl.utm_source asc, lvl.utm_medium asc
 limit 15;
