@@ -47,8 +47,8 @@ ads_ya_vk as (
     from vk_ads
     group by 1, 2, 3, 4
 ),
-	
-final_table as ( 
+
+final_table as (
     select
     date(lvl.visit_date) as visit_date,
     count(lvl.visitor_id) as visitors_count,
@@ -62,14 +62,15 @@ final_table as (
 from last_visits_and_leads as lvl
 left join ads_ya_vk as ads
     on
-        lvl.visit_date = ads.advertising_date and lvl.utm_source = ads.utm_source and lvl.utm_medium = ads.utm_medium and lvl.utm_campaign = ads.utm_campaign
+        lvl.visit_date = ads.advertising_date and lvl.utm_source = ads.utm_source
+	and lvl.utm_medium = ads.utm_medium and lvl.utm_campaign = ads.utm_campaign
 group by 1, 3, 4, 5, 6
 order by 9 desc nulls last, 1, 5 desc, 2, 3, 4
 ),
 
 --корреляция пирсона
-select 
-	case 
+select
+	case
 		when utm_source = 'vk' then utm_source
 		when utm_source = 'yandex' then utm_source
 		else 'other sourses'
@@ -99,7 +100,7 @@ FROM
     final_table
 GROUP BY 
     1, 2, 3, 4
-order by 
+order by
     1;
 
 
@@ -109,18 +110,19 @@ with cte_for_ads_spendings as (
 select
 visit_date,
 utm_source,
-sum(total_cost) AS total_cost
+sum(total_cost) as total_cost
 from final_table
 where utm_source like 'vk%' or utm_source like '%andex%'
-group by 1, 2)
+group by 1, 2
+)
 
 select
 cte.visit_date,
-case 
+case
 	when cte.utm_source like 'vk%' then 'vk'
     when cte.utm_source like '%andex%' then 'yandex'
 end as utm_source,
-coalesce(max(cte.total_cost), 0) AS total_cost
+coalesce(max(cte.total_cost), 0) as total_cost
 from cte_for_ads_spendings cte
 
 group by 1, 2
