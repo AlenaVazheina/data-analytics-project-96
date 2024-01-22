@@ -68,7 +68,7 @@ left join ads_ya_vk as ads
 group by 1, 2, 3, 4, 5
 order by
     revenue desc nulls last, visit_date asc,
-    last_visits_and_leads.utm_campaign desc,
-    visitors_count asc, last_visits_and_leads.utm_source asc,
-    last_visits_and_leads.utm_medium asc
+    lvl.utm_campaign desc,
+    visitors_count asc, lvl.utm_source asc,
+    lvl.utm_medium asc
 limit 15;
