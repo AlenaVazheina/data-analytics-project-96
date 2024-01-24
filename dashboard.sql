@@ -33,22 +33,28 @@ select
         when cte_ads_s.utm_source like '%andex%' then 'yandex'
     end as utm_source,
     coalesce(max(cte_ads_s.total_cost), 0) as total_cost
-from cte_for_ads_spendings cte_ads_s
+from cte_for_ads_spendings as cte_ads_s
 group by cte_ads_s.visit_date, utm_source;
 
 
 --расчет конверсии  из клика в лид и из лида в оплату
 select
-round(sum(leads_count) * 100.0 / nullif(sum(visitors_count), 0), 2) as leads_conversion,
-round(sum(purchases_count) * 100.0 / nullif(sum(leads_count), 0), 2) as payment_conversion
+    round(
+        sum(leads_count) * 100.0 / nullif(sum(visitors_count), 0), 2
+    ) as leads_conversion,
+    round(
+        sum(purchases_count) * 100.0 / nullif(sum(leads_count), 0), 2
+    ) as payment_conversion
 from final_table;
 
 --количество лидов
 
-select visit_date,
-sum(leads_count)
+select
+    visit_date,
+    sum(leads_count)
 from final_table
 group by visit_date;
+
 
 
 
