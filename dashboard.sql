@@ -12,7 +12,7 @@ select
     as correlation
 from final_table
 group by
-    utm_source
+    utm_source;
 
 --расходы на рекламу по каналам в динамике
 
@@ -41,7 +41,7 @@ select
     		else utm_source end,
 	sum(visitors_count) AS user_count
 from final_table
-group by 1, 2, 3, 4
+group by 1, 2, 3, 4;
 
 
 --количество пользователей по дням, неделям и месяцам
@@ -68,4 +68,4 @@ select
     end as month,
     sum(visitors_count) as user_count
 from final_table
-group by 1, 2, 3
+group by 1, 2, 3;
