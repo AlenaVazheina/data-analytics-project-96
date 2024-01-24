@@ -55,7 +55,8 @@ final_table as (
         lvl.utm_campaign,
         ads.total_cost,
         date(lvl.visit_date) as visit_date,
-        count(lvl.visitor_id) filter (where lvl.lead_id is not null) as leads_count,
+        count(lvl.visitor_id) filter (where lvl.lead_id is not null)
+	as leads_count,
         count(lvl.visitor_id) filter (where lvl.status_id = 142)
         as purchases_count,
         sum(lvl.amount) filter (where lvl.status_id = 142)
@@ -79,9 +80,9 @@ final_table as (
 --корреляция пирсона
 select
     case
-	when utm_source = 'vk' then utm_source
-	when utm_source = 'yandex' then utm_source
-	else 'other sourses'
+        when utm_source = 'vk' then utm_source
+        when utm_source = 'yandex' then utm_source
+        else 'other sourses'
     end as utm_source,
     coalesce(sum(total_cost), 0) as total_cost,
     sum(revenue) as revenue,
@@ -91,23 +92,34 @@ from final_table
 group by 1
 
 --сводная таблица
+
 select
     visit_date,
     utm_source,
     utm_medium,
     utm_campaign,
-    COALESCE(SUM(visitors_count),0) AS visitors,
-    COALESCE(SUM(leads_count),0) AS leads,
-    COALESCE(SUM(total_cost),0) AS total_cost,
-    COALESCE(SUM(purchases_count),0) AS purchases,
-    COALESCE(SUM(revenue),0) AS revenue,
-    round(COALESCE(SUM(total_cost) / NULLIF(SUM(visitors_count), 0),0),2) AS cpu,
-    round(COALESCE(SUM(total_cost) / NULLIF(SUM(leads_count), 0),0),2) AS cpl,
-    round(COALESCE(SUM(total_cost) / NULLIF(SUM(purchases_count), 0),0),2) AS cppu,
-    round(COALESCE((SUM(revenue) - SUM(total_cost)) * 1.0 / NULLIF(SUM(total_cost), 0), 0),2) AS roi
-FROM 
+    COALESCE(SUM(visitors_count), 0) as visitors,
+    COALESCE(SUM(leads_count), 0) as leads,
+    COALESCE(SUM(total_cost), 0) as total_cost,
+    COALESCE(SUM(purchases_count), 0) as purchases,
+    COALESCE(SUM(revenue), 0) as revenue,
+    ROUND(
+        COALESCE(SUM(total_cost) / NULLIF(SUM(visitors_count), 0), 0), 2
+    ) as cpu,
+    ROUND(COALESCE(SUM(total_cost) / NULLIF(SUM(leads_count), 0), 0), 2) as cpl,
+    ROUND(
+        COALESCE(SUM(total_cost) / NULLIF(SUM(purchases_count), 0), 0), 2
+    ) as cppu,
+    ROUND(
+        COALESCE(
+            (SUM(revenue) - SUM(total_cost)) * 1.0 / NULLIF(SUM(total_cost), 0),
+            0
+        ),
+        2
+    ) as roi
+from
     final_table
-GROUP BY 
+group by
     1, 2, 3, 4
 order by
     1;
@@ -119,7 +131,7 @@ with cte_for_ads_spendings as (
     select
         visit_date,
         utm_source,
-	sum(total_cost) as total_cost
+        sum(total_cost) as total_cost
     from final_table
     where utm_source like 'vk%' or utm_source like '%andex%'
     group by 1, 2
@@ -128,11 +140,11 @@ with cte_for_ads_spendings as (
 select
     cte.visit_date,
     case
-        when cte.utm_source like 'vk%' then 'vk'
-        when cte.utm_source like '%andex%' then 'yandex'
+        when cte_ads_s.utm_source like 'vk%' then 'vk'
+        when cte_ads_s.utm_source like '%andex%' then 'yandex'
     end as utm_source,
     coalesce(max(cte.total_cost), 0) as total_cost
-from cte_for_ads_spendings cte
+from cte_for_ads_spendings cte_ads_s
 
 group by 1, 2
 
