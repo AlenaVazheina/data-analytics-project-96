@@ -69,7 +69,8 @@ final_table as (
             and lvl.utm_source = ads.utm_source
             and lvl.utm_medium = ads.utm_medium
             and lvl.utm_campaign = ads.utm_campaign
-    group by lvl.utm_source, lvl.utm_medium, lvl.utm_campaign,
+    group by
+        lvl.utm_source, lvl.utm_medium, lvl.utm_campaign,
 	ads.total_cost, visit_date
     order by
         revenue desc nulls last, visit_date asc,
@@ -91,8 +92,6 @@ select
     as correlation
 from final_table
 group by utm_source
-
---сводная таблица
 
 select
     visit_date,
@@ -148,9 +147,6 @@ select
 from cte_for_ads_spendings as cte_ads_s
 
 group by cte_ads_s.visit_date, utm_source
-
-
---расчет конверсии  из клика в лид и из лида в оплату
 
 select
 round(sum(leads_count) * 100.0 / nullif(sum(visitors_count), 0), 2) as leads_conversion,
