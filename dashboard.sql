@@ -56,7 +56,7 @@ final_table as (
         ads.total_cost,
         date(lvl.visit_date) as visit_date,
         count(lvl.visitor_id) filter (where lvl.lead_id is not null)
-	as leads_count,
+        as leads_count,
         count(lvl.visitor_id) filter (where lvl.status_id = 142)
         as purchases_count,
         sum(lvl.amount) filter (where lvl.status_id = 142)
@@ -138,12 +138,12 @@ with cte_for_ads_spendings as (
 )
 
 select
-    cte.visit_date,
+    cte_ads_s.visit_date,
     case
         when cte_ads_s.utm_source like 'vk%' then 'vk'
         when cte_ads_s.utm_source like '%andex%' then 'yandex'
     end as utm_source,
-    coalesce(max(cte.total_cost), 0) as total_cost
+    coalesce(max(cte_ads_s.total_cost), 0) as total_cost
 from cte_for_ads_spendings cte_ads_s
 
 group by 1, 2
