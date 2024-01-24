@@ -93,33 +93,6 @@ select
 from final_table
 group by utm_source
 
-select
-    visit_date,
-    utm_source,
-    utm_medium,
-    utm_campaign,
-    COALESCE(SUM(visitors_count), 0) as visitors,
-    COALESCE(SUM(leads_count), 0) as leads,
-    COALESCE(SUM(total_cost), 0) as total_cost,
-    COALESCE(SUM(purchases_count), 0) as purchases,
-    COALESCE(SUM(revenue), 0) as revenue,
-    ROUND(COALESCE(SUM(total_cost) / NULLIF(SUM(visitors_count), 0), 0), 2)
-    as cpu,
-    ROUND(COALESCE(SUM(total_cost) / NULLIF(SUM(leads_count), 0), 0), 2) as cpl,
-    ROUND(COALESCE(SUM(total_cost) / NULLIF(SUM(purchases_count), 0), 0), 2)
-    as cppu,
-    ROUND(COALESCE((
-        SUM(revenue) - SUM(total_cost)) * 1.0 / NULLIF(
-        SUM(total_cost),
-        0), 0), 2) as roi
-from
-    final_table
-group by
-    visit_date, utm_source, utm_medium, utm_campaign
-order by
-    visit_date;
-
-
 --расходы на рекламу по каналам в динамике
 with cte_for_ads_spendings as (
 
@@ -142,14 +115,6 @@ select
 from cte_for_ads_spendings as cte_ads_s
 
 group by cte_ads_s.visit_date, utm_source
-
-select
-    round(sum(leads_count) * 100.0 / nullif(sum(visitors_count), 0), 2)
-    as leads_conversion,
-    round(sum(purchases_count) * 100.0 / nullif(sum(leads_count), 0), 2)
-    as payment_conversion
-from final_table
-
 
 --количество лидов
 
