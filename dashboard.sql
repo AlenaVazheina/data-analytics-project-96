@@ -50,22 +50,28 @@ ads_ya_vk as (
 
 final_table as (
     select
-    date(lvl.visit_date) as visit_date,
-    count(lvl.visitor_id) as visitors_count,
-    lvl.utm_source,
-    lvl.utm_medium,
-    lvl.utm_campaign,
-    ads.total_cost,
-    count(lvl.visitor_id) filter (where lvl.lead_id is not null) as leads_count,
-    count(lvl.visitor_id) filter (where lvl.status_id = 142) as purchases_count,
-    sum(lvl.amount) filter (where lvl.status_id = 142) as revenue
+        date(lvl.visit_date) as visit_date,
+        count(lvl.visitor_id) as visitors_count,
+        lvl.utm_source,
+        lvl.utm_medium,
+        lvl.utm_campaign,
+        ads.total_cost,
+        count(lvl.visitor_id) filter (where lvl.lead_id is not null) as leads_count,
+        count(lvl.visitor_id) filter (where lvl.status_id = 142) as purchases_count,
+        sum(lvl.amount) filter (where lvl.status_id = 142) as revenue
 from last_visits_and_leads as lvl
 left join ads_ya_vk as ads
     on
-        lvl.visit_date = ads.advertising_date and lvl.utm_source = ads.utm_source
-	and lvl.utm_medium = ads.utm_medium and lvl.utm_campaign = ads.utm_campaign
-group by 1, 3, 4, 5, 6
-order by 9 desc nulls last, 1, 5 desc, 2, 3, 4
+        lvl.visit_date = ads.advertising_date
+        and lvl.utm_source = ads.utm_source
+        and lvl.utm_medium = ads.utm_medium
+        and lvl.utm_campaign = ads.utm_campaign
+group by 1, 2, 3, 4, 5
+order by
+    revenue desc nulls last, visit_date asc,
+    lvl.utm_campaign desc,
+    visitors_count asc, lvl.utm_source asc,
+    lvl.utm_medium asc
 ),
 
 --корреляция пирсона
