@@ -69,7 +69,8 @@ final_table as (
             and lvl.utm_source = ads.utm_source
             and lvl.utm_medium = ads.utm_medium
             and lvl.utm_campaign = ads.utm_campaign
-    group by lvl.utm_source, lvl.utm_medium, lvl.utm_campaign, ads.total_cost, visit_date
+    group by lvl.utm_source, lvl.utm_medium, lvl.utm_campaign,
+	ads.total_cost, visit_date
     order by
         revenue desc nulls last, visit_date asc,
         lvl.utm_campaign desc,
@@ -144,9 +145,9 @@ select
         when cte_ads_s.utm_source like '%andex%' then 'yandex'
     end as utm_source,
     coalesce(max(cte_ads_s.total_cost), 0) as total_cost
-from cte_for_ads_spendings cte_ads_s
+from cte_for_ads_spendings as cte_ads_s
 
-group by visit_date, utm_source
+group by cte_ads_s.visit_date, utm_source
 
 
 --расчет конверсии  из клика в лид и из лида в оплату
