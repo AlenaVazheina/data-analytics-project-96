@@ -95,6 +95,7 @@ select
     end as utm_source,
     coalesce(max(cte_ads_s.total_cost), 0) as total_cost
 from cte_for_ads_spendings as cte_ads_s
+group by cte_ads_s.visit_date, utm_source
 --расходы на рекламу по каналам в динамике
 --корреляция пирсона
 select
@@ -113,7 +114,7 @@ group by utm_source
 --расходы на рекламу по каналам в динамике
 
 
-group by cte_ads_s.visit_date, utm_source
+
 --количество лидов
 
 select visit_date,
