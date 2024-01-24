@@ -11,14 +11,14 @@ select
     round(cast(coalesce(corr(total_cost, revenue), 0) as numeric), 3)
     as correlation
 from final_table
-group by utm_source
+group by
+    utm_source
 
 --расходы на рекламу по каналам в динамике
 
 
 
 --количество лидов
-
 select visit_date,
 sum(leads_count)
 from final_table
