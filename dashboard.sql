@@ -51,16 +51,16 @@ ads_ya_vk as (
 final_table as (
     select
         lvl.utm_source,
-	lvl.utm_medium,
-	lvl.utm_campaign,
-	ads.total_cost,
-	date(lvl.visit_date) as visit_date,
-	count(lvl.visitor_id) filter (where lvl.lead_id is not null) as leads_count,
-	count(lvl.visitor_id) filter (where lvl.status_id = 142)
-	as purchases_count,
-	sum(lvl.amount) filter (where lvl.status_id = 142)
-	as revenue,
-	count(lvl.visitor_id) as visitors_count
+        lvl.utm_medium,
+        lvl.utm_campaign,
+        ads.total_cost,
+        date(lvl.visit_date) as visit_date,
+        count(lvl.visitor_id) filter (where lvl.lead_id is not null) as leads_count,
+        count(lvl.visitor_id) filter (where lvl.status_id = 142)
+        as purchases_count,
+        sum(lvl.amount) filter (where lvl.status_id = 142)
+        as revenue,
+        count(lvl.visitor_id) as visitors_count
     from last_visits_and_leads as lvl
     left join ads_ya_vk as ads
         on
@@ -118,7 +118,7 @@ with cte_for_ads_spendings as (
 
     select
         visit_date,
-	utm_source,
+        utm_source,
 	sum(total_cost) as total_cost
     from final_table
     where utm_source like 'vk%' or utm_source like '%andex%'
