@@ -1,5 +1,4 @@
-with
-visitors_leads as (
+with visitors_leads as (
     select
         s.visitor_id,
         s.source as utm_source,
