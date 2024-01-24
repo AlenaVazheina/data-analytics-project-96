@@ -69,8 +69,8 @@ group by
     lvl.utm_source, lvl.utm_medium, lvl.utm_campaign,
     ads.total_cost, date(lvl.visit_date)
 order by
-    revenue desc nulls last, date(lvl.visit_date) asc,
+    date(lvl.visit_date) asc,
     lvl.utm_campaign desc,
-    visitors_count asc, lvl.utm_source asc,
+    lvl.utm_source asc,
     lvl.utm_medium asc
 limit 15;
