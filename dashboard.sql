@@ -94,8 +94,8 @@ from final_table
 group by utm_source
 
 --расходы на рекламу по каналам в динамике
+	
 with cte_for_ads_spendings as (
-
     select
         visit_date,
         utm_source,
