@@ -18,13 +18,6 @@ group by
 
 
 
---количество лидов
-select visit_date,
-sum(leads_count)
-from final_table
-group by 1
-
-
 
 ----количество пользователей по каналам и дням, неделям, месяцам
 select  
