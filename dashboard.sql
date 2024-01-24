@@ -50,45 +50,48 @@ ads_ya_vk as (
 
 final_table as (
     select
-        date(lvl.visit_date) as visit_date,
-        count(lvl.visitor_id) as visitors_count,
         lvl.utm_source,
-        lvl.utm_medium,
-        lvl.utm_campaign,
-        ads.total_cost,
-        count(lvl.visitor_id) filter (where lvl.lead_id is not null) as leads_count,
-        count(lvl.visitor_id) filter (where lvl.status_id = 142) as purchases_count,
-        sum(lvl.amount) filter (where lvl.status_id = 142) as revenue
-from last_visits_and_leads as lvl
-left join ads_ya_vk as ads
-    on
-        lvl.visit_date = ads.advertising_date
-        and lvl.utm_source = ads.utm_source
-        and lvl.utm_medium = ads.utm_medium
-        and lvl.utm_campaign = ads.utm_campaign
-group by 1, 2, 3, 4, 5
-order by
-    revenue desc nulls last, visit_date asc,
-    lvl.utm_campaign desc,
-    visitors_count asc, lvl.utm_source asc,
-    lvl.utm_medium asc
+	lvl.utm_medium,
+	lvl.utm_campaign,
+	ads.total_cost,
+	date(lvl.visit_date) as visit_date,
+	count(lvl.visitor_id) filter (where lvl.lead_id is not null) as leads_count,
+	count(lvl.visitor_id) filter (where lvl.status_id = 142)
+	as purchases_count,
+	sum(lvl.amount) filter (where lvl.status_id = 142)
+	as revenue,
+	count(lvl.visitor_id) as visitors_count
+    from last_visits_and_leads as lvl
+    left join ads_ya_vk as ads
+        on
+            lvl.visit_date = ads.advertising_date
+            and lvl.utm_source = ads.utm_source
+            and lvl.utm_medium = ads.utm_medium
+            and lvl.utm_campaign = ads.utm_campaign
+    group by 1, 2, 3, 4, 5
+    order by
+        revenue desc nulls last, visit_date asc,
+        lvl.utm_campaign desc,
+        visitors_count asc, lvl.utm_source asc,
+        lvl.utm_medium asc
 ),
 
 --корреляция пирсона
 select
-	case
-		when utm_source = 'vk' then utm_source
-		when utm_source = 'yandex' then utm_source
-		else 'other sourses'
-	end as utm_source,
-	coalesce(sum(total_cost), 0) as total_cost,
-	sum(revenue) as revenue,
-	round(cast(coalesce(corr(total_cost, revenue), 0) as numeric), 3) as correlation
+    case
+	when utm_source = 'vk' then utm_source
+	when utm_source = 'yandex' then utm_source
+	else 'other sourses'
+    end as utm_source,
+    coalesce(sum(total_cost), 0) as total_cost,
+    sum(revenue) as revenue,
+    round(cast(coalesce(corr(total_cost, revenue), 0) as numeric), 3)
+    as correlation
 from final_table
 group by 1
 
 --сводная таблица
-SELECT 
+select
     visit_date,
     utm_source,
     utm_medium,
@@ -113,29 +116,29 @@ order by
 --расходы на рекламу по каналам в динамике
 with cte_for_ads_spendings as (
 
-select
-visit_date,
-utm_source,
-sum(total_cost) as total_cost
-from final_table
-where utm_source like 'vk%' or utm_source like '%andex%'
-group by 1, 2
+    select
+        visit_date,
+	utm_source,
+	sum(total_cost) as total_cost
+    from final_table
+    where utm_source like 'vk%' or utm_source like '%andex%'
+    group by 1, 2
 )
 
 select
-cte.visit_date,
-case
-	when cte.utm_source like 'vk%' then 'vk'
-    when cte.utm_source like '%andex%' then 'yandex'
-end as utm_source,
-coalesce(max(cte.total_cost), 0) as total_cost
+    cte.visit_date,
+    case
+        when cte.utm_source like 'vk%' then 'vk'
+        when cte.utm_source like '%andex%' then 'yandex'
+    end as utm_source,
+    coalesce(max(cte.total_cost), 0) as total_cost
 from cte_for_ads_spendings cte
 
 group by 1, 2
 
 
 --расчет конверсии  из клика в лид и из лида в оплату
-select 
+select
 round(sum(leads_count) * 100.0 / nullif(sum(visitors_count), 0), 2) as leads_conversion,
 round(sum(purchases_count) * 100.0 / nullif(sum(leads_count), 0), 2) as payment_conversion
 from final_table
