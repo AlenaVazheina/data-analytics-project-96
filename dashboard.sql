@@ -78,22 +78,6 @@ final_table as (
         visitors_count asc, lvl.utm_source asc,
         lvl.utm_medium asc
 ),
-
---корреляция пирсона
-select
-    case
-        when utm_source = 'vk' then utm_source
-        when utm_source = 'yandex' then utm_source
-        else 'other sourses'
-    end as utm_source,
-    coalesce(sum(total_cost), 0) as total_cost,
-    sum(revenue) as revenue,
-    round(cast(coalesce(corr(total_cost, revenue), 0) as numeric), 3)
-    as correlation
-from final_table
-group by utm_source
-
---расходы на рекламу по каналам в динамике
 with cte_for_ads_spendings as (
     select
         visit_date,
@@ -112,6 +96,23 @@ select
     end as utm_source,
     coalesce(max(cte_ads_s.total_cost), 0) as total_cost
 from cte_for_ads_spendings as cte_ads_s
+--расходы на рекламу по каналам в динамике
+--корреляция пирсона
+select
+    case
+        when utm_source = 'vk' then utm_source
+        when utm_source = 'yandex' then utm_source
+        else 'other sourses'
+    end as utm_source,
+    coalesce(sum(total_cost), 0) as total_cost,
+    sum(revenue) as revenue,
+    round(cast(coalesce(corr(total_cost, revenue), 0) as numeric), 3)
+    as correlation
+from final_table
+group by utm_source
+
+--расходы на рекламу по каналам в динамике
+
 
 group by cte_ads_s.visit_date, utm_source
 --количество лидов
