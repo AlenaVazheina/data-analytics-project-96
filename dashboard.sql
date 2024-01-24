@@ -38,7 +38,7 @@ select
         when
             date(visit_date) between '2023-06-26' and '2023-06-30'
             then '26-06 - 30-06'
-    end as week,
+    end as visit_week,
     case when date(visit_date) between '2023-06-01' and '2023-06-30' then 'June'
     end as visit_month,
     case
@@ -52,7 +52,7 @@ select
     end as utm_source,
     sum(visitors_count) as user_count
 from final_table
-group by visit_day, week, visit_month, utm_source;
+group by visit_day, visit_week, visit_month, utm_source;
 
 
 --количество пользователей по дням, неделям и месяцам
@@ -74,9 +74,9 @@ select
         when
             date(visit_date) between '2023-06-26' and '2023-06-30'
             then '26-06 - 30-06'
-    end as week,
+    end as visit_week,
     case when date(visit_date) between '2023-06-01' and '2023-06-30' then 'June'
     end as visit_month,
     sum(visitors_count) as user_count
 from final_table
-group by visit_day, week, visit_month;
+group by visit_day, visit_week, visit_month;
