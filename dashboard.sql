@@ -51,7 +51,7 @@ from final_table;
 
 select
     visit_date,
-    sum(leads_count)
+    sum(leads_count) as leads_count
 from final_table
 group by visit_date;
 
@@ -127,21 +127,21 @@ select
     utm_source,
     utm_medium,
     utm_campaign,
-    COALESCE(SUM(visitors_count), 0) as visitors,
-    COALESCE(SUM(leads_count), 0) as leads,
-    COALESCE(SUM(total_cost), 0) as total_cost,
-    COALESCE(SUM(purchases_count), 0) as purchases,
-    COALESCE(SUM(revenue), 0) as revenue,
-    ROUND(
-        COALESCE(SUM(total_cost) / NULLIF(SUM(visitors_count), 0), 0), 2
+    coalesce(sum(visitors_count), 0) as visitors,
+    coalesce(sum(leads_count), 0) as leads,
+    coalesce(sum(total_cost), 0) as total_cost,
+    coalesce(sum(purchases_count), 0) as purchases,
+    coalesce(sum(revenue), 0) as revenue,
+    round(
+        coalesce(sum(total_cost) / nullif(sum(visitors_count), 0), 0), 2
     ) as cpu,
-    ROUND(COALESCE(SUM(total_cost) / NULLIF(SUM(leads_count), 0), 0), 2) as cpl,
-    ROUND(
-        COALESCE(SUM(total_cost) / NULLIF(SUM(purchases_count), 0), 0), 2
+    round(coalesce(sum(total_cost) / nullif(sum(leads_count), 0), 0), 2) as cpl,
+    round(
+        coalesce(sum(total_cost) / nullif(sum(purchases_count), 0), 0), 2
     ) as cppu,
-    ROUND(
-        COALESCE(
-            (SUM(revenue) - SUM(total_cost)) * 1.0 / NULLIF(SUM(total_cost), 0),
+    round(
+        coalesce(
+            (sum(revenue) - sum(total_cost)) * 1.0 / nullif(sum(total_cost), 0),
             0
         ),
         2
