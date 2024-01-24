@@ -94,7 +94,26 @@ from final_table
 group by utm_source
 
 --расходы на рекламу по каналам в динамике
+with cte_for_ads_spendings as (
+    select
+        visit_date,
+        utm_source,
+        sum(total_cost) as total_cost
+    from final_table
+    where utm_source like 'vk%' or utm_source like '%andex%'
+    group by visit_date, utm_source
+)
 
+select
+    cte_ads_s.visit_date,
+    case
+        when cte_ads_s.utm_source like 'vk%' then 'vk'
+        when cte_ads_s.utm_source like '%andex%' then 'yandex'
+    end as utm_source,
+    coalesce(max(cte_ads_s.total_cost), 0) as total_cost
+from cte_for_ads_spendings as cte_ads_s
+
+group by cte_ads_s.visit_date, utm_source
 --количество лидов
 
 select visit_date,
