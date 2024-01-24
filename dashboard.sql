@@ -36,7 +36,7 @@ ads_ya_vk as (
         utm_campaign,
         sum(daily_spent) as total_cost
     from ya_ads
-    group by 1, 2, 3, 4
+    group by advertising_date, utm_source, utm_medium, total_cost
     union all
     select
         date(campaign_date) as advertising_date,
@@ -45,7 +45,7 @@ ads_ya_vk as (
         utm_campaign,
         sum(daily_spent) as total_cost
     from vk_ads
-    group by 1, 2, 3, 4
+    group by advertising_date, utm_source, utm_medium, total_cost
 ),
 
 final_table as (
