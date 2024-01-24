@@ -21,7 +21,7 @@ group by
 
 --количество пользователей по каналам и дням, неделям, месяцам
 select
-    date(visit_date) as day,
+    date(visit_date) as visit_day,
     case
         when
             date(visit_date) between '2023-06-01' and '2023-06-04'
@@ -40,7 +40,7 @@ select
             then '26-06 - 30-06'
     end as week,
     case when date(visit_date) between '2023-06-01' and '2023-06-30' then 'June'
-    end as month,
+    end as visit_month,
     case
         when utm_source like 'vk%' then 'vk'
         when utm_source like '%andex%' then 'yandex'
@@ -49,15 +49,15 @@ select
         when utm_source like 'facebook%' then 'facebook'
         when utm_source like '%zen%' then 'Yandex Dzen'
         else utm_source
-    end,
+    end as utm_source,
     sum(visitors_count) as user_count
 from final_table
-group by 1, 2, 3, 4;
+group by visit_day, week, visit_month, utm_source;
 
 
 --количество пользователей по дням, неделям и месяцам
 select
-    date(visit_date) as day,
+    date(visit_date) as visit_day,
     case
         when
             date(visit_date) between '2023-06-01' and '2023-06-04'
@@ -76,7 +76,7 @@ select
             then '26-06 - 30-06'
     end as week,
     case when date(visit_date) between '2023-06-01' and '2023-06-30' then 'June'
-    end as month,
+    end as visit_month,
     sum(visitors_count) as user_count
 from final_table
-group by 1, 2, 3;
+group by visit_day, week, visit_month;
