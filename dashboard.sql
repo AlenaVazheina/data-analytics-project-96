@@ -1,16 +1,21 @@
 --ЗАПРОСЫ В ДАШБОРД
 --корреляция пирсона
-SELECT
-    CASE
-        WHEN utm_source = 'vk' THEN utm_source
-        WHEN utm_source = 'yandex' THEN utm_source
-        ELSE 'other sources'
-    END AS utm_source_grouped,
-    COALESCE(SUM(total_cost), 0) AS total_cost,
-    SUM(revenue) AS revenue,
-    ROUND(CAST(COALESCE(CORR(total_cost, revenue), 0) AS NUMERIC), 3) AS correlation
-FROM final_table
-GROUP BY utm_source_grouped;
+select
+    case
+        when utm_source = 'vk' then utm_source
+        when utm_source = 'yandex' then utm_source
+        else 'other sourses'
+    end as utm_source,
+    coalesce(sum(total_cost), 0) as total_cost,
+    sum(revenue) as revenue,
+    round(cast(coalesce(corr(total_cost, revenue), 0) as numeric), 3)
+    as correlation
+from final_table
+group by
+    utm_source;
+
+--расходы на рекламу по каналам в динамике
+
 
 
 
@@ -63,4 +68,4 @@ select
     end as month,
     sum(visitors_count) as user_count
 from final_table
-group by 1, 2, 3
+group by 1, 2, 3;
