@@ -69,7 +69,7 @@ final_table as (
             and lvl.utm_source = ads.utm_source
             and lvl.utm_medium = ads.utm_medium
             and lvl.utm_campaign = ads.utm_campaign
-    group by 1, 2, 3, 4, 5
+    group by lvl.utm_source, lvl.utm_medium, lvl.utm_campaign, ads.total_cost, visit_date
     order by
         revenue desc nulls last, visit_date asc,
         lvl.utm_campaign desc,
@@ -89,7 +89,7 @@ select
     round(cast(coalesce(corr(total_cost, revenue), 0) as numeric), 3)
     as correlation
 from final_table
-group by 1
+group by utm_source
 
 --сводная таблица
 
@@ -120,9 +120,9 @@ select
 from
     final_table
 group by
-    1, 2, 3, 4
+    visit_date, utm_source, utm_medium, utm_campaign
 order by
-    1;
+    visit_date;
 
 
 --расходы на рекламу по каналам в динамике
@@ -134,7 +134,7 @@ with cte_for_ads_spendings as (
         sum(total_cost) as total_cost
     from final_table
     where utm_source like 'vk%' or utm_source like '%andex%'
-    group by 1, 2
+    group by visit_date, utm_source
 )
 
 select
@@ -146,10 +146,11 @@ select
     coalesce(max(cte_ads_s.total_cost), 0) as total_cost
 from cte_for_ads_spendings cte_ads_s
 
-group by 1, 2
+group by visit_date, utm_source
 
 
 --расчет конверсии  из клика в лид и из лида в оплату
+
 select
 round(sum(leads_count) * 100.0 / nullif(sum(visitors_count), 0), 2) as leads_conversion,
 round(sum(purchases_count) * 100.0 / nullif(sum(leads_count), 0), 2) as payment_conversion
