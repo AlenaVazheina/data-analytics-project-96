@@ -67,9 +67,10 @@ left join ads_ya_vk as ads
         and lvl.utm_campaign = ads.utm_campaign
 group by
     lvl.utm_source, lvl.utm_medium, lvl.utm_campaign,
-    ads.total_cost, visit_date
+    ads.total_cost, date(lvl.visit_date)
 order by
-    revenue desc nulls last, visit_date asc,
+    revenue desc nulls last,
+    date(lvl.visit_date) asc,
     lvl.utm_campaign desc,
     visitors_count asc, lvl.utm_source asc,
     lvl.utm_medium asc
