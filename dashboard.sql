@@ -103,20 +103,15 @@ select
     COALESCE(SUM(total_cost), 0) as total_cost,
     COALESCE(SUM(purchases_count), 0) as purchases,
     COALESCE(SUM(revenue), 0) as revenue,
-    ROUND(
-        COALESCE(SUM(total_cost) / NULLIF(SUM(visitors_count), 0), 0), 2
-    ) as cpu,
+    ROUND(COALESCE(SUM(total_cost) / NULLIF(SUM(visitors_count), 0), 0), 2)
+    as cpu,
     ROUND(COALESCE(SUM(total_cost) / NULLIF(SUM(leads_count), 0), 0), 2) as cpl,
-    ROUND(
-        COALESCE(SUM(total_cost) / NULLIF(SUM(purchases_count), 0), 0), 2
-    ) as cppu,
-    ROUND(
-        COALESCE(
-            (SUM(revenue) - SUM(total_cost)) * 1.0 / NULLIF(SUM(total_cost), 0),
-            0
-        ),
-        2
-    ) as roi
+    ROUND(COALESCE(SUM(total_cost) / NULLIF(SUM(purchases_count), 0), 0), 2)
+    as cppu,
+    ROUND(COALESCE((
+        SUM(revenue) - SUM(total_cost)) * 1.0 / NULLIF(
+        SUM(total_cost),
+        0), 0), 2) as roi
 from
     final_table
 group by
