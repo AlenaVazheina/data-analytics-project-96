@@ -149,12 +149,10 @@ from cte_for_ads_spendings as cte_ads_s
 group by cte_ads_s.visit_date, utm_source
 
 select
-    round(
-        sum(leads_count) * 100.0 / nullif(sum(visitors_count), 0), 2
-    ) as leads_conversion,
-    round(
-        sum(purchases_count) * 100.0 / nullif(sum(leads_count), 0), 2
-    ) as payment_conversion
+    round(sum(leads_count) * 100.0 / nullif(sum(visitors_count), 0), 2)
+    as leads_conversion,
+    round(sum(purchases_count) * 100.0 / nullif(sum(leads_count), 0), 2)
+    as payment_conversion
 from final_table
 
 
